@@ -36,7 +36,7 @@
     self.textField.returnKeyType = UIReturnKeyDone;
     self.textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     self.textField.autocorrectionType = UITextAutocorrectionTypeNo;
-    self.textField.placeholder = NSLocalizedString(@"Website URL", @"Placeholder text for web browser URL field");
+    self.textField.placeholder = NSLocalizedString(@"Website URL or Search Term", @"Placeholder text for web browser URL field or search term");
     self.textField.backgroundColor = [UIColor colorWithWhite:220/255.0f alpha:1];
     self.textField.delegate = self;  /* another good delegate example.  "this text field's referencing obj (the delegate) is 'self' (the ViewController) */
     
@@ -107,14 +107,28 @@
 #pragma mark - UITextFieldDelegate
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {  /* notice this syntax of '*' inside the parens when the delegate handles action report messages from reference objs.  this is how parameters are done in objc, remember.  you're passing in the textField obj created above, and confirming its type to this method. and see below for more examples of delegate methods which are called upon certain messages sent back by the reference objs */
+    
+    /* assgmnt 23 goal: if spaces in url string, do a google search with it as query
+     - do some if statement checking if textfield has spaces
+     - if so, make the NSURL obj into that as a search (http://google.com/search?q=<search query>)
+     - what would you do for one word search term?  not implemented.
+     */
+    
     [textField resignFirstResponder];
     
     NSString *URLString = textField.text;
     
     NSURL *URL = [NSURL URLWithString:URLString];
     
-    if (!URL.scheme) {
-        URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", URLString]];
+    NSRange whiteSpaceRange = [URLString rangeOfCharacterFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    if (whiteSpaceRange.location != NSNotFound) {
+        NSString *queryString = [URLString stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+        URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://google.com/search?q=%@", queryString]];
+    } else {
+        if (!URL.scheme) {
+            URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", URLString]];
+        }
     }
     
     if (URL) {
