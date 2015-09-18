@@ -25,7 +25,7 @@
     [self.window makeKeyAndVisible];
     
     /** Assgmt Goal: make welcome alert on launch
-     
+     - note using self.window.rootViewController and calling the presentViewController:animated:completion method on it to add the alert controller view to the (top of, right?) view hierarchy
      */
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Welcome!", @"Welcome message")
                                                                    message:@"Cheers to a safe browsing experience with us"
