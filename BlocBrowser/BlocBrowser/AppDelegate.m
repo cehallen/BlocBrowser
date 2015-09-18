@@ -23,6 +23,21 @@
     self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[[ViewController alloc] init]];
     
     [self.window makeKeyAndVisible];
+    
+    /** Assgmt Goal: make welcome alert on launch
+     
+     */
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Welcome!", @"Welcome message")
+                                                                   message:@"Cheers to a safe browsing experience with us"
+                                                            preferredStyle:(UIAlertControllerStyleAlert)];
+    
+    UIAlertAction *onwardAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Onward", nil)
+                                                       style:UIAlertActionStyleCancel handler:nil];
+    
+    [alert addAction:onwardAction];
+    
+    [self.window.rootViewController presentViewController:alert animated:YES completion:nil];
+    
     return YES;
 }
 
