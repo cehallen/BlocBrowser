@@ -76,7 +76,7 @@
     self.textField.frame = CGRectMake(0, 0, width, itemHeight);
     self.webView.frame = CGRectMake(0, CGRectGetMaxY(self.textField.frame), width, browserHeight); /* the second answer here: http://stackoverflow.com/questions/5361369/uiview-frame-bounds-and-center has a good image for bounds vs frame explanation.  BOUNDS are more like its size as a CGRect (CGRect's 4 values being top left corner location over x and down y; width, and height. thfr a bound's first two values will always be (0,0)) unrelated to it's orientation , while FRAME is a footprint showing that view's place within the superview */
     
-    self.awesomeToolbar.frame = CGRectMake(20, 50, 280, 60);
+    self.awesomeToolbar.frame = CGRectMake(20, 100, 280, 60);
     
 }
 
@@ -139,13 +139,13 @@
 #pragma mark - AwesomeFloatingToolbarDelegate
 
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didSelectButtonWithTitle:(NSString *)title {
-    if ([title isEqual:kWebBrowserBackString]) {
+    if ([title isEqual:NSLocalizedString(@"Back", @"Back command")]) {
         [self.webView goBack];
-    } else if ([title isEqual:kWebBrowserForwardString]) {
+    } else if ([title isEqual:NSLocalizedString(@"Forward", @"Forward command")]) {
         [self.webView goForward];
-    } else if ([title isEqual:kWebBrowserStopString]) {
+    } else if ([title isEqual:NSLocalizedString(@"Stop", @"Stop command")]) {
         [self.webView stopLoading];
-    } else if ([title isEqual:kWebBrowserRefreshString]) {
+    } else if ([title isEqual:NSLocalizedString(@"Refresh", @"Reload command")]) {
         [self.webView reload];
     }
 }
