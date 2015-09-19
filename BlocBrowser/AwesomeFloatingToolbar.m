@@ -145,7 +145,7 @@
     self.currentLabel = nil;
 }
 
-- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
     self.currentLabel.alpha = 1;
     self.currentLabel = nil;
 }
