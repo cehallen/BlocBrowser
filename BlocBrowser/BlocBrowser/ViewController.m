@@ -138,11 +138,6 @@
 
 #pragma mark - AwesomeFloatingToolbarDelegate
 
-//#define kWebBrowserBackString NSLocalizedString(@"Back", @"Back command")
-//#define kWebBrowserForwardString NSLocalizedString(@"Forward", @"Forward command")
-//#define kWebBrowserStopString NSLocalizedString(@"Stop", @"Stop command")
-//#define kWebBrowserRefreshString NSLocalizedString(@"Refresh", @"Reload command")
-
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didSelectButtonWithTitle:(NSString *)title {
     if ([title isEqual:kWebBrowserBackString]) {
         [self.webView goBack];
