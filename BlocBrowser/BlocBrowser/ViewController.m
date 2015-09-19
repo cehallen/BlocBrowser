@@ -44,7 +44,8 @@
     self.textField.backgroundColor = [UIColor colorWithWhite:220/255.0f alpha:1];
     self.textField.delegate = self;  /* another good delegate example.  "this text field's referencing obj (the delegate) is 'self' (the ViewController) */
     
-    self.awesomeToolbar = [[AwesomeFloatingToolbar alloc] initWithFourTitles:@[kWebBrowserBackString, kWebBrowserForwardString, kWebBrowserRefreshString, kWebBrowserStopString]];
+    self.awesomeToolbar = [[AwesomeFloatingToolbar alloc] initWithFourTitles:@[kWebBrowserBackString, kWebBrowserForwardString, kWebBrowserStopString, kWebBrowserRefreshString]];
+    self.awesomeToolbar.delegate = self;  /** I was missing this line... so the NSLog in the toolbar was firing, but the pass to the delegate (supposed to be here) was not fired because the delegate was not set.  Therefore the NSLog I had in this file in the touch responder method did not fire. */
     
     for (UIView *viewToAdd in @[self.webView, self.textField, self.awesomeToolbar]) {
         [mainView addSubview:viewToAdd];
@@ -139,6 +140,7 @@
 
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didSelectButtonWithTitle:(NSString *)title {
     if ([title isEqual:NSLocalizedString(@"Back", @"Back command")]) {
+        NSLog(@"**back tap reached VC**");
         [self.webView goBack];
     } else if ([title isEqual:NSLocalizedString(@"Forward", @"Forward command")]) {
         [self.webView goForward];
