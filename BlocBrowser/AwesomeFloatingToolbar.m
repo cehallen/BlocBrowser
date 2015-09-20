@@ -6,6 +6,19 @@
 //  Copyright © 2015 Bloc. All rights reserved.
 //
 
+/** for assgnmt 26 - the part about replacing the toolbar labels with buttons
+ - buttons are better bc they have tap gesture recognizers built in
+ 
+ - there are useful signals built in to buttons you can access with UIButton instance method 'addTarget:forControlEvents:'.  
+    eg: UIControlEventTouchDown, UIControlEventTouchUpInside, UIControlEventTouchUpOutside, UIControlEventTouchCancel, etc.
+    see docs for more: https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIControl_Class/#//apple_ref/doc/constant_group/Control_Events
+    you can use them to change opacity a la the labels before.  see first answer here for implementation deets:
+    http://stackoverflow.com/questions/16615514/uibutton-press-and-hold-repeat-action-until-let-go
+ 
+ - http://stackoverflow.com/questions/903114/way-to-make-a-uibutton-continuously-fire-during-a-press-and-hold-situation?lq=1
+    second answer
+ */
+
 #import "AwesomeFloatingToolbar.h"
 
 @interface AwesomeFloatingToolbar ()
@@ -61,7 +74,7 @@
             [self addSubview:thisLabel];
         }
         
-        self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFired:)];
+        self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFired:)];  /** notice the empty parameter after tapFired and panFired...  in the methods there ARE arguments (the ).  some automatic stuff going on. */
         [self addGestureRecognizer:self.tapGesture];
         
         self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
