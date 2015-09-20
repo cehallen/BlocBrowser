@@ -51,7 +51,7 @@
         [mainView addSubview:viewToAdd];
     }
     
-    self.view = mainView;
+    self.view = mainView;  /* note, controller has a 'view' (here) and 'subviews' as different properties of 'self', but the subviews are sub to the view and related.  as for where the size of 'view' frame is set.. I couldn't find it.  seems like setting self.view assumes the whole window size. */
 }
 
 - (void)viewDidLoad {
@@ -147,6 +147,17 @@
         [self.webView stopLoading];
     } else if ([title isEqual:NSLocalizedString(@"Refresh", @"Reload command")]) {
         [self.webView reload];
+    }
+}
+
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPanWithOffset:(CGPoint)offset {
+    CGPoint startingPoint = toolbar.frame.origin;
+    CGPoint newPoint = CGPointMake(startingPoint.x + offset.x, startingPoint.y + offset.y);  /* couldn't I use 'offset' here, and not bother with 'startingPoint'?  since each time the method is fired the starting point is reset to (0,0)? */
+    
+    CGRect potentialNewFrame = CGRectMake(newPoint.x, newPoint.y, CGRectGetWidth(toolbar.frame), CGRectGetHeight(toolbar.frame));
+    
+    if (CGRectContainsRect(self.view.bounds, potentialNewFrame)) {
+        toolbar.frame = potentialNewFrame;
     }
 }
 
