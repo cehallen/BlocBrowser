@@ -180,9 +180,7 @@
 
 - (void) longPressFired:(UILongPressGestureRecognizer *)recognizer {
     if (recognizer.state == UIGestureRecognizerStateRecognized) {
-        NSLog(@"long press in aft.m");  // works
         if ([self.delegate respondsToSelector:@selector(floatingToolbar:didLongPress:)]) {
-            NSLog(@"long press in aft.m, part 2"); // works
             [self.delegate floatingToolbar:self didLongPress:recognizer];
         }
     }

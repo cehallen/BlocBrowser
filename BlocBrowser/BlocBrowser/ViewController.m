@@ -162,8 +162,8 @@
 }
 
 
-// work here to resize frame of toolbar if within bounds
-/** implementation notes
+
+/** resize frame of toolbar with pinch
  - CGAffineTransformScale
     http://www.ioscreator.com/tutorials/scale-image-with-uipinchgesturerecognizer
  - more detailed code example
@@ -203,7 +203,7 @@
     CGFloat factor = recognizer.scale;
     
     toolbarView.transform = CGAffineTransformScale(toolbarView.transform, factor, factor);
-    toolbarView.bounds = CGRectApplyAffineTransform(initialBounds, toolbarView.transform);  /* neither this nor line below work */
+    toolbarView.bounds = CGRectApplyAffineTransform(initialBounds, toolbarView.transform);  /* neither this nor lines below work */
 //    self.awesomeToolbar.frame = CGRectApplyAffineTransform(initialBounds, toolbarView.transform);
 //    self.awesomeToolbar.frame = CGRectMake(CGRectGetMinX(initialBounds) * factor, CGRectGetMinY(initialBounds) * factor, CGRectGetWidth(initialBounds) * factor, CGRectGetHeight(initialBounds) * factor);
 //    self.awesomeToolbar.frame = CGRectMake(20, 100, 280, 280); // test if has any effect at all.. A: it DOES square off frame and bounds but still cannot see any change in size of frame in simulator
@@ -226,7 +226,6 @@
 //        NSLog(@"long touch into VC"); // not working
 //        recognizer.view.backgroundColor = [UIColor blackColor];
 //    }
-    NSLog(@"long touch into VC");
     
     for (UILabel *label in toolbar.labels) {
         NSUInteger currentColorIndex= [toolbar.colors indexOfObject:label.backgroundColor];
