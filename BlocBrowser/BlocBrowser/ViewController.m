@@ -227,12 +227,12 @@
 //        recognizer.view.backgroundColor = [UIColor blackColor];
 //    }
     
-    for (UILabel *label in toolbar.labels) {
-        NSUInteger currentColorIndex= [toolbar.colors indexOfObject:label.backgroundColor];
-        if (currentColorIndex == toolbar.labels.count - 1) {
-            label.backgroundColor = toolbar.colors[0];
+    for (UIButton *button in toolbar.buttons) {
+        NSUInteger currentColorIndex= [toolbar.colors indexOfObject:button.backgroundColor];
+        if (currentColorIndex == toolbar.buttons.count - 1) {
+            button.backgroundColor = toolbar.colors[0];
         } else {
-            label.backgroundColor = toolbar.colors[currentColorIndex + 1];
+            button.backgroundColor = toolbar.colors[currentColorIndex + 1];
         }
     }
 }

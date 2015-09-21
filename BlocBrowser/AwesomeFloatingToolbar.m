@@ -7,7 +7,8 @@
 //
 
 /** for assgnmt 26 - the part about replacing the toolbar labels with buttons
- - buttons are better bc they have tap gesture recognizers built in
+ - basic button tap
+    http://stackoverflow.com/questions/1378765/how-do-i-create-a-basic-uibutton-programmatically
  
  - there are useful signals built in to buttons you can access with UIButton instance method 'addTarget:forControlEvents:'.  
     eg: UIControlEventTouchDown, UIControlEventTouchUpInside, UIControlEventTouchUpOutside, UIControlEventTouchCancel, etc.
@@ -24,7 +25,8 @@
 @interface AwesomeFloatingToolbar ()
 
 @property (nonatomic, strong) NSArray *currentTitles;
-@property (nonatomic, weak) UILabel *currentLabel;
+//@property (nonatomic, weak) UILabel *currentLabel;  // what does this do?? check bloc.  A: 'keeps track of which label user is currently touching
+@property (nonatomic, weak) UIButton *currentButton;  // not sure if needed but I added this for same purpose as above
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
@@ -47,35 +49,65 @@
                         [UIColor colorWithRed:222/255.0 green:165/255.0 blue:164/255.0 alpha:1],
                         [UIColor colorWithRed:255/255.0 green:179/255.0 blue:71/255.0 alpha:1]];
         
-        NSMutableArray *labelsArray = [[NSMutableArray alloc] init];
+        /**
+         replace labels with buttons and remove tap gesture to enable
+         - remember to change .h file, and references in ViewController to the labels
+         */
         
-        // Make the 4 labels
+        NSMutableArray *buttonsArray = [[NSMutableArray alloc] init];
+        
         for (NSString *currentTitle in self.currentTitles) {
-            UILabel *label = [[UILabel alloc] init];
-            label.userInteractionEnabled = NO;
-            label.alpha = 0.25;
+            UIButton *button = [[UIButton alloc] init];
+//            button.userInteractionEnabled = YES; // necessary?
             
-            NSUInteger currentTitleIndex = [self.currentTitles indexOfObject:currentTitle]; // 0 through 3
-            NSString *titleForThisLabel = [self.currentTitles objectAtIndex:currentTitleIndex];
-            UIColor *colorForThisLabel = [self.colors objectAtIndex:currentTitleIndex];
+            NSUInteger currentTitleIndex = [self.currentTitles indexOfObject:currentTitle];
+            NSString *titleForThisButton = [self.currentTitles objectAtIndex:currentTitleIndex];
+            UIColor *colorForThisButton = [self.colors objectAtIndex:currentTitleIndex];
             
-            label.textAlignment = NSTextAlignmentCenter;
-            label.font = [UIFont systemFontOfSize:10];
-            label.text = titleForThisLabel;
-            label.backgroundColor = colorForThisLabel;
-            label.textColor = [UIColor whiteColor];
+            [button setTitle:titleForThisButton forState:UIControlStateNormal];
+            [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            [button.titleLabel setFont:[UIFont systemFontOfSize:12]];  // how to make dynamic for bigger devices?
+            button.backgroundColor = colorForThisButton;
             
-            [labelsArray addObject:label];
+            [button addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchDown];
+            
+            [buttonsArray addObject:button];
         }
         
-        self.labels = labelsArray;
-        
-        for (UILabel *thisLabel in self.labels) {
-            [self addSubview:thisLabel];
+        self.buttons = buttonsArray;
+        for (UIButton *thisButton in self.buttons) {
+            [self addSubview:thisButton];
         }
         
-        self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFired:)];  /** notice the empty parameter after tapFired and panFired...  in the methods there ARE arguments (the ).  some automatic stuff going on. */
-        [self addGestureRecognizer:self.tapGesture];
+//        NSMutableArray *labelsArray = [[NSMutableArray alloc] init];
+//        
+//        // Make the 4 labels
+//        for (NSString *currentTitle in self.currentTitles) {
+//            UILabel *label = [[UILabel alloc] init];
+//            label.userInteractionEnabled = NO;
+//            label.alpha = 0.25;
+//            
+//            NSUInteger currentTitleIndex = [self.currentTitles indexOfObject:currentTitle]; // 0 through 3
+//            NSString *titleForThisLabel = [self.currentTitles objectAtIndex:currentTitleIndex];
+//            UIColor *colorForThisLabel = [self.colors objectAtIndex:currentTitleIndex];
+//            
+//            label.textAlignment = NSTextAlignmentCenter;
+//            label.font = [UIFont systemFontOfSize:10];
+//            label.text = titleForThisLabel;
+//            label.backgroundColor = colorForThisLabel;
+//            label.textColor = [UIColor whiteColor];
+//            
+//            [labelsArray addObject:label];
+//        }
+//        
+//        self.labels = labelsArray;
+//        
+//        for (UILabel *thisLabel in self.labels) {
+//            [self addSubview:thisLabel];
+//        }
+        
+//        self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFired:)];  /** notice the empty parameter after tapFired and panFired...  in the methods there ARE arguments (the ).  some automatic stuff going on. */
+//        [self addGestureRecognizer:self.tapGesture];
         
         self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
         [self addGestureRecognizer:self.panGesture];
@@ -91,65 +123,105 @@
 }
 
 - (void) layoutSubviews {
-    // set the frames for the 4 labels
     
-    for (UILabel *thisLabel in self.labels) {
-        NSUInteger currentLabelIndex = [self.labels indexOfObject:thisLabel];
+    /* change to button layout */
+    for (UIButton *thisButton in self.buttons) {
+        NSUInteger currentButtonIndex = [self.buttons indexOfObject:thisButton];
         
-        CGFloat labelHeight = CGRectGetHeight(self.bounds) / 2;  /* ? where does 'self' have bounds from at this point?  */
-        CGFloat labelWidth = CGRectGetWidth(self.bounds) / 2;
-        CGFloat labelX = 0;
-        CGFloat labelY = 0;
+        CGFloat buttonHeight = CGRectGetHeight(self.bounds) / 2;
+        CGFloat buttonWidth = CGRectGetWidth(self.bounds) / 2;
+        CGFloat buttonX = 0;
+        CGFloat buttonY = 0;
         
-        // adjust labelX and labelY for each label
-        if (currentLabelIndex < 2) {
+        if (currentButtonIndex < 2) {
             // 0 or 1, so on top
-            labelY = 0;
+            buttonY = 0;
         } else {
             // 2 or 3, so on bottom
-            labelY = CGRectGetHeight(self.bounds) / 2;
+            buttonY = CGRectGetHeight(self.bounds) / 2;
         }
-        
-        if (currentLabelIndex % 2 == 0) { // is currentLabelIndex evenly divisible by 2?
+
+        if (currentButtonIndex % 2 == 0) {
             // 0 or 2, so on the left
-            labelX = 0;
+            buttonX = 0;
         } else {
             // 1 or 3, so on the right
-            labelX = CGRectGetWidth(self.bounds) / 2;
+            buttonX = CGRectGetWidth(self.bounds) / 2;
         }
         
-        thisLabel.frame = CGRectMake(labelX, labelY, labelWidth, labelHeight);
+        thisButton.frame = CGRectMake(buttonX, buttonY, buttonWidth, buttonHeight);
     }
+    
+//    for (UILabel *thisLabel in self.labels) {
+//        NSUInteger currentLabelIndex = [self.labels indexOfObject:thisLabel];
+//        
+//        CGFloat labelHeight = CGRectGetHeight(self.bounds) / 2;  /* ? where does 'self' have bounds from at this point?  A: this is the whole toolbars bounds, set in the initializer */
+//        CGFloat labelWidth = CGRectGetWidth(self.bounds) / 2;
+//        CGFloat labelX = 0;
+//        CGFloat labelY = 0;
+//        
+//        // adjust labelX and labelY for each label
+//        if (currentLabelIndex < 2) {
+//            // 0 or 1, so on top
+//            labelY = 0;
+//        } else {
+//            // 2 or 3, so on bottom
+//            labelY = CGRectGetHeight(self.bounds) / 2;
+//        }
+//        
+//        if (currentLabelIndex % 2 == 0) { // is currentLabelIndex evenly divisible by 2?
+//            // 0 or 2, so on the left
+//            labelX = 0;
+//        } else {
+//            // 1 or 3, so on the right
+//            labelX = CGRectGetWidth(self.bounds) / 2;
+//        }
+//        
+//        thisLabel.frame = CGRectMake(labelX, labelY, labelWidth, labelHeight);
+//    }
+    
+
+
+
 }
 
 
 
 #pragma mark - Touch Handling
 
-- (UILabel *) labelFromTouches:(NSSet *)touches withEvent:(UIEvent *)event {
-    UITouch *touch = [touches anyObject];
-    CGPoint location = [touch locationInView:self];
-    UIView *subview = [self hitTest:location withEvent:event];
-    
-    if ([subview isKindOfClass:[UILabel class]]) {
-        return (UILabel *)subview;
-    } else {
-        return nil;
-    }
-}
-
-- (void) tapFired:(UITapGestureRecognizer *)recognizer {
-    if (recognizer.state == UIGestureRecognizerStateRecognized) {
-        CGPoint location = [recognizer locationInView:self];
-        UIView *tappedView = [self hitTest:location withEvent:nil];
-        
-        if ([self.labels containsObject:tappedView]) {
-            if ([self.delegate respondsToSelector:@selector(floatingToolbar:didSelectButtonWithTitle:)]) {
-                [self.delegate floatingToolbar:self didSelectButtonWithTitle:((UILabel *)tappedView).text];
-            }
+/* change to buttons */
+- (void) buttonPressed:(UIButton *)sender {
+    if ([self.buttons containsObject:sender]) {
+        if ([self.delegate respondsToSelector:@selector(floatingToolbar:didSelectButtonWithTitle:)]) {
+            [self.delegate floatingToolbar:self didSelectButtonWithTitle:((UIButton *)sender).currentTitle];
         }
     }
 }
+
+//- (UILabel *) labelFromTouches:(NSSet *)touches withEvent:(UIEvent *)event {
+//    UITouch *touch = [touches anyObject];
+//    CGPoint location = [touch locationInView:self];
+//    UIView *subview = [self hitTest:location withEvent:event];
+//    
+//    if ([subview isKindOfClass:[UILabel class]]) {
+//        return (UILabel *)subview;
+//    } else {
+//        return nil;
+//    }
+//}
+//
+//- (void) tapFired:(UITapGestureRecognizer *)recognizer {
+//    if (recognizer.state == UIGestureRecognizerStateRecognized) {
+//        CGPoint location = [recognizer locationInView:self];
+//        UIView *tappedView = [self hitTest:location withEvent:nil];
+//        
+//        if ([self.labels containsObject:tappedView]) {
+//            if ([self.delegate respondsToSelector:@selector(floatingToolbar:didSelectButtonWithTitle:)]) {
+//                [self.delegate floatingToolbar:self didSelectButtonWithTitle:((UILabel *)tappedView).text];
+//            }
+//        }
+//    }
+//}
 
 - (void) panFired:(UIPanGestureRecognizer *)recognizer {
     if (recognizer.state == UIGestureRecognizerStateRecognized) {
@@ -194,9 +266,9 @@
     NSUInteger index = [self.currentTitles indexOfObject:title];
     
     if (index != NSNotFound) {
-        UILabel *label = [self.labels objectAtIndex:index];
-        label.userInteractionEnabled = enabled;
-        label.alpha = enabled ? 1.0 : 0.25;
+        UIButton *button = [self.buttons objectAtIndex:index];
+        button.userInteractionEnabled = enabled;
+        button.alpha = enabled ? 1.0 : 0.25;
     }
 }
 
