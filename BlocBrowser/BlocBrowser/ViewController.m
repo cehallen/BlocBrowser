@@ -62,6 +62,7 @@
     
     self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.activityIndicator];
+    self.awesomeToolbar.frame = CGRectMake(20, 100, 280, 60);
 }
 
 - (void)viewWillLayoutSubviews {
@@ -76,7 +77,7 @@
     self.textField.frame = CGRectMake(0, 0, width, itemHeight);
     self.webView.frame = CGRectMake(0, CGRectGetMaxY(self.textField.frame), width, browserHeight); /* the second answer here: http://stackoverflow.com/questions/5361369/uiview-frame-bounds-and-center has a good image for bounds vs frame explanation.  BOUNDS are more like its size as a CGRect (CGRect's 4 values being top left corner location over x and down y; width, and height. thfr a bound's first two values will always be (0,0)) unrelated to it's orientation , while FRAME is a footprint showing that view's place within the superview */
     
-    self.awesomeToolbar.frame = CGRectMake(20, 100, 280, 60);
+    
     
 }
 
@@ -173,8 +174,26 @@
  */
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPinchZoom:(UIPinchGestureRecognizer *)recognizer {
 
-    NSLog(@"original toolbar frame: %@", NSStringFromCGRect(recognizer.view.frame));
-    NSLog(@"original toolbar bounds: %@", NSStringFromCGRect(recognizer.view.bounds));
+//    NSLog(@"original toolbar frame: %@", NSStringFromCGRect(recognizer.view.frame));
+//    NSLog(@"original toolbar bounds: %@", NSStringFromCGRect(recognizer.view.bounds));
+    
+    
+    
+// // (e) limit large and small zoom
+//    CGRect potentialNewFrame = CGRectMake(0, 0, self.webView.bounds.size.width/2, self.webView.bounds.size.height);
+    
+    CGAffineTransform zt = CGAffineTransformMakeScale(recognizer.scale, recognizer.scale);
+    CGRect testLargeRect = CGRectApplyAffineTransform(recognizer.view.frame, zt);
+    CGRect testSmallRect = CGRectApplyAffineTransform(recognizer.view.frame, zt);
+    
+    if (testLargeRect.size.width > self.webView.bounds.size.width || testSmallRect.size.width < self.webView.bounds.size.width/3) {
+        return;
+    } else {
+        recognizer.view.transform = CGAffineTransformScale(recognizer.view.transform, recognizer.scale, recognizer.scale);
+    }
+    
+    
+//
     
 // // (a) works, sort of.  frame or border is not enlarged.  ie, toolbar zoomed in but not bigger
 //    recognizer.view.transform = CGAffineTransformScale(recognizer.view.transform, recognizer.scale, recognizer.scale);
@@ -195,22 +214,22 @@
 //    toolbarView.bounds = CGRectApplyAffineTransform(initialBounds, toolbarView.transform); /* this method not working */
 
     // // (d) try avoiding uigesturerecognizerstatebegan.  seems new bounds ARE changed now, but no visible change in simulator
-    static CGRect initialBounds;
-    UIView *toolbarView = recognizer.view;
+//    static CGRect initialBounds;
+//    UIView *toolbarView = recognizer.view;
+//    
+//    initialBounds = toolbarView.bounds;
+//    
+//    CGFloat factor = recognizer.scale;
     
-    initialBounds = toolbarView.bounds;
-    
-    CGFloat factor = recognizer.scale;
-    
-    toolbarView.transform = CGAffineTransformScale(toolbarView.transform, factor, factor);
-    toolbarView.bounds = CGRectApplyAffineTransform(initialBounds, toolbarView.transform);  /* neither this nor lines below work */
+//    toolbarView.transform = CGAffineTransformScale(toolbarView.transform, factor, factor);
+//    toolbarView.bounds = CGRectApplyAffineTransform(initialBounds, toolbarView.transform);  /* neither this nor lines below work */
 //    self.awesomeToolbar.frame = CGRectApplyAffineTransform(initialBounds, toolbarView.transform);
 //    self.awesomeToolbar.frame = CGRectMake(CGRectGetMinX(initialBounds) * factor, CGRectGetMinY(initialBounds) * factor, CGRectGetWidth(initialBounds) * factor, CGRectGetHeight(initialBounds) * factor);
 //    self.awesomeToolbar.frame = CGRectMake(20, 100, 280, 280); // test if has any effect at all.. A: it DOES square off frame and bounds but still cannot see any change in size of frame in simulator
     
     
-    NSLog(@"new toolbar frame: %@", NSStringFromCGRect(recognizer.view.frame));
-    NSLog(@"new toolbar bounds: %@", NSStringFromCGRect(recognizer.view.bounds));
+//    NSLog(@"new toolbar frame: %@", NSStringFromCGRect(recognizer.view.frame));
+//    NSLog(@"new toolbar bounds: %@", NSStringFromCGRect(recognizer.view.bounds));
 
     
     

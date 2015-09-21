@@ -224,7 +224,7 @@
 //}
 
 - (void) panFired:(UIPanGestureRecognizer *)recognizer {
-    if (recognizer.state == UIGestureRecognizerStateRecognized) {
+    //if (recognizer.state == UIGestureRecognizerStateRecognized) {
         CGPoint translation = [recognizer translationInView:self];  /* gives nice new point read as difference in x and y, eg, {-10, 20}, which represents left 10, down 20.  */
         
 //        NSLog(@"New translation: %@", NSStringFromCGPoint(translation));
@@ -234,11 +234,11 @@
         }
         
         [recognizer setTranslation:CGPointZero inView:self];
-    }
+    //}
 }
 
 - (void) pinchFired:(UIPinchGestureRecognizer *)recognizer {
-    if (recognizer.state == UIGestureRecognizerStateRecognized) {
+    //if (recognizer.state == UIGestureRecognizerStateRecognized) {
         
 //        NSLog(@"New zoom scale: %f", recognizer.scale);
         
@@ -247,7 +247,7 @@
         }
         
 //        [recognizer setScale:1.0];  // doesn't seem to do anything
-    }
+    //}
 }
 
 - (void) longPressFired:(UILongPressGestureRecognizer *)recognizer {
