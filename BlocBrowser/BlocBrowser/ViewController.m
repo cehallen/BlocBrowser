@@ -193,7 +193,7 @@
     }
     
     
-//
+//   leave comments in assgnmt branch or future reference despite how ugly
     
 // // (a) works, sort of.  frame or border is not enlarged.  ie, toolbar zoomed in but not bigger
 //    recognizer.view.transform = CGAffineTransformScale(recognizer.view.transform, recognizer.scale, recognizer.scale);
