@@ -24,8 +24,6 @@
 @interface AwesomeFloatingToolbar ()
 
 @property (nonatomic, strong) NSArray *currentTitles;
-@property (nonatomic, strong) NSArray *colors;
-@property (nonatomic, strong) NSArray *labels;
 @property (nonatomic, weak) UILabel *currentLabel;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
@@ -82,13 +80,11 @@
         self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
         [self addGestureRecognizer:self.panGesture];
         
-        // pinch gesture to resize
         self.pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchFired:)];
         [self addGestureRecognizer:self.pinchGesture];
         
-//        // long press gesture to rotate background colors
-//        self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressFired:)];
-//        [self addGestureRecognizer:self.longPressGesture];
+        self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressFired:)];
+        [self addGestureRecognizer:self.longPressGesture];
     }
     
     return self;
@@ -172,13 +168,23 @@
 - (void) pinchFired:(UIPinchGestureRecognizer *)recognizer {
     if (recognizer.state == UIGestureRecognizerStateRecognized) {
         
-        NSLog(@"New zoom scale: %f", recognizer.scale);
+//        NSLog(@"New zoom scale: %f", recognizer.scale);
         
         if ([self.delegate respondsToSelector:@selector(floatingToolbar:didTryToPinchZoom:)]) {
             [self.delegate floatingToolbar:self didTryToPinchZoom:recognizer];
         }
         
 //        [recognizer setScale:1.0];  // doesn't seem to do anything
+    }
+}
+
+- (void) longPressFired:(UILongPressGestureRecognizer *)recognizer {
+    if (recognizer.state == UIGestureRecognizerStateRecognized) {
+        NSLog(@"long press in aft.m");  // works
+        if ([self.delegate respondsToSelector:@selector(floatingToolbar:didLongPress:)]) {
+            NSLog(@"long press in aft.m, part 2"); // works
+            [self.delegate floatingToolbar:self didLongPress:recognizer];
+        }
     }
 }
 

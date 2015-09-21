@@ -183,23 +183,59 @@
 //    recognizer.view.transform = CGAffineTransformScale(recognizer.view.transform, recognizer.scale, recognizer.scale);
 //    recognizer.view.bounds = CGRectMake(0, 0, CGRectGetWidth(recognizer.view.frame), CGRectGetHeight(recognizer.view.frame));
     
-// // (c) not sure why stops working completely
+// // (c) not sure why 'CGRectApplyAffineTransform' doesn't change the bounds.
+//    static CGRect initialBounds;
+//    UIView *toolbarView = recognizer.view;
+//    if (recognizer.state == UIGestureRecognizerStateBegan) {
+//        initialBounds = toolbarView.bounds;
+//    }
+//    CGFloat factor = recognizer.scale;
+//    
+//    toolbarView.transform = CGAffineTransformScale(toolbarView.transform, factor, factor);
+//    toolbarView.bounds = CGRectApplyAffineTransform(initialBounds, toolbarView.transform); /* this method not working */
+
+    // // (d) try avoiding uigesturerecognizerstatebegan.  seems new bounds ARE changed now, but no visible change in simulator
     static CGRect initialBounds;
     UIView *toolbarView = recognizer.view;
-    if (recognizer.state == UIGestureRecognizerStateBegan) {
-        initialBounds = toolbarView.bounds;
-    }
+    
+    initialBounds = toolbarView.bounds;
+    
     CGFloat factor = recognizer.scale;
     
     toolbarView.transform = CGAffineTransformScale(toolbarView.transform, factor, factor);
-    toolbarView.bounds = CGRectApplyAffineTransform(initialBounds, toolbarView.transform); /* this method not working */
-    
-
-    
+    toolbarView.bounds = CGRectApplyAffineTransform(initialBounds, toolbarView.transform);  /* neither this nor line below work */
+//    self.awesomeToolbar.frame = CGRectApplyAffineTransform(initialBounds, toolbarView.transform);
+//    self.awesomeToolbar.frame = CGRectMake(CGRectGetMinX(initialBounds) * factor, CGRectGetMinY(initialBounds) * factor, CGRectGetWidth(initialBounds) * factor, CGRectGetHeight(initialBounds) * factor);
+//    self.awesomeToolbar.frame = CGRectMake(20, 100, 280, 280); // test if has any effect at all.. A: it DOES square off frame and bounds but still cannot see any change in size of frame in simulator
     
     
     NSLog(@"new toolbar frame: %@", NSStringFromCGRect(recognizer.view.frame));
     NSLog(@"new toolbar bounds: %@", NSStringFromCGRect(recognizer.view.bounds));
+
+    
+    
+}
+
+/** long press to rotate floating toolbar label colors
+ 
+ */
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didLongPress:(UILongPressGestureRecognizer *)recognizer {
+
+    /* not working inside the if statement. why? */
+//    if (recognizer.state == UIGestureRecognizerStateBegan) {
+//        NSLog(@"long touch into VC"); // not working
+//        recognizer.view.backgroundColor = [UIColor blackColor];
+//    }
+    NSLog(@"long touch into VC");
+    
+    for (UILabel *label in toolbar.labels) {
+        NSUInteger currentColorIndex= [toolbar.colors indexOfObject:label.backgroundColor];
+        if (currentColorIndex == toolbar.labels.count - 1) {
+            label.backgroundColor = toolbar.colors[0];
+        } else {
+            label.backgroundColor = toolbar.colors[currentColorIndex + 1];
+        }
+    }
 }
 
 

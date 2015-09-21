@@ -17,7 +17,7 @@
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didSelectButtonWithTitle:(NSString *)title;
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPanWithOffset:(CGPoint)offset;
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPinchZoom:(UIPinchGestureRecognizer *)recognizer;
-//- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didLongPress:???????;
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didLongPress:(UILongPressGestureRecognizer *)recognizer;
 
 @end
 
@@ -28,5 +28,9 @@
 - (void) setEnabled:(BOOL)enabled forButtonWithTitle:(NSString *)title;
 
 @property (nonatomic, weak) id <AwesomeFloatingToolbarDelegate> delegate;
+
+// moved here for tap gesture access to toolbar properties
+@property (nonatomic, strong) NSArray *colors;
+@property (nonatomic, strong) NSArray *labels;
 
 @end
