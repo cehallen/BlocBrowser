@@ -180,7 +180,6 @@
     
     
 // // (e) limit large and small zoom
-//    CGRect potentialNewFrame = CGRectMake(0, 0, self.webView.bounds.size.width/2, self.webView.bounds.size.height);
     
     CGAffineTransform zt = CGAffineTransformMakeScale(recognizer.scale, recognizer.scale);
     CGRect testLargeRect = CGRectApplyAffineTransform(recognizer.view.frame, zt);
@@ -193,7 +192,7 @@
     }
     
     
-//   leave comments in assgnmt branch or future reference despite how ugly
+// // leave comments in assgnmt branch for future reference despite how ugly
     
 // // (a) works, sort of.  frame or border is not enlarged.  ie, toolbar zoomed in but not bigger
 //    recognizer.view.transform = CGAffineTransformScale(recognizer.view.transform, recognizer.scale, recognizer.scale);
