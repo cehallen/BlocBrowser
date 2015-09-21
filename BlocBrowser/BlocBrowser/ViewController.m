@@ -162,6 +162,47 @@
 }
 
 
+// work here to resize frame of toolbar if within bounds
+/** implementation notes
+ - CGAffineTransformScale
+    http://www.ioscreator.com/tutorials/scale-image-with-uipinchgesturerecognizer
+ - more detailed code example
+    http://stackoverflow.com/questions/2691369/how-can-i-use-pinch-zoomuipinchgesturerecognizer-to-change-width-of-a-uitextvi
+ - showing how to increase/decrease CGRect size by a factor
+ 
+ */
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPinchZoom:(UIPinchGestureRecognizer *)recognizer {
+
+    NSLog(@"original toolbar frame: %@", NSStringFromCGRect(recognizer.view.frame));
+    NSLog(@"original toolbar bounds: %@", NSStringFromCGRect(recognizer.view.bounds));
+    
+// // (a) works, sort of.  frame or border is not enlarged.  ie, toolbar zoomed in but not bigger
+//    recognizer.view.transform = CGAffineTransformScale(recognizer.view.transform, recognizer.scale, recognizer.scale);
+
+// // (b) seems the same, frame or border not enlarged.  ie, second line added doesn't do anything.
+//    recognizer.view.transform = CGAffineTransformScale(recognizer.view.transform, recognizer.scale, recognizer.scale);
+//    recognizer.view.bounds = CGRectMake(0, 0, CGRectGetWidth(recognizer.view.frame), CGRectGetHeight(recognizer.view.frame));
+    
+// // (c) not sure why stops working completely
+    static CGRect initialBounds;
+    UIView *toolbarView = recognizer.view;
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        initialBounds = toolbarView.bounds;
+    }
+    CGFloat factor = recognizer.scale;
+    
+    toolbarView.transform = CGAffineTransformScale(toolbarView.transform, factor, factor);
+    toolbarView.bounds = CGRectApplyAffineTransform(initialBounds, toolbarView.transform); /* this method not working */
+    
+
+    
+    
+    
+    NSLog(@"new toolbar frame: %@", NSStringFromCGRect(recognizer.view.frame));
+    NSLog(@"new toolbar bounds: %@", NSStringFromCGRect(recognizer.view.bounds));
+}
+
+
 
 #pragma mark Miscellaneous
 

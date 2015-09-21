@@ -29,6 +29,8 @@
 @property (nonatomic, weak) UILabel *currentLabel;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
+@property (nonatomic, strong) UILongPressGestureRecognizer *longPressGesture;
 
 @end
 
@@ -79,6 +81,14 @@
         
         self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
         [self addGestureRecognizer:self.panGesture];
+        
+        // pinch gesture to resize
+        self.pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchFired:)];
+        [self addGestureRecognizer:self.pinchGesture];
+        
+//        // long press gesture to rotate background colors
+//        self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressFired:)];
+//        [self addGestureRecognizer:self.longPressGesture];
     }
     
     return self;
@@ -149,13 +159,26 @@
     if (recognizer.state == UIGestureRecognizerStateRecognized) {
         CGPoint translation = [recognizer translationInView:self];  /* gives nice new point read as difference in x and y, eg, {-10, 20}, which represents left 10, down 20.  */
         
-        NSLog(@"New translation: %@", NSStringFromCGPoint(translation));
+//        NSLog(@"New translation: %@", NSStringFromCGPoint(translation));
         
         if ([self.delegate respondsToSelector:@selector(floatingToolbar:didTryToPanWithOffset:)]) {
             [self.delegate floatingToolbar:self didTryToPanWithOffset:translation];
         }
         
         [recognizer setTranslation:CGPointZero inView:self];
+    }
+}
+
+- (void) pinchFired:(UIPinchGestureRecognizer *)recognizer {
+    if (recognizer.state == UIGestureRecognizerStateRecognized) {
+        
+        NSLog(@"New zoom scale: %f", recognizer.scale);
+        
+        if ([self.delegate respondsToSelector:@selector(floatingToolbar:didTryToPinchZoom:)]) {
+            [self.delegate floatingToolbar:self didTryToPinchZoom:recognizer];
+        }
+        
+//        [recognizer setScale:1.0];  // doesn't seem to do anything
     }
 }
 
